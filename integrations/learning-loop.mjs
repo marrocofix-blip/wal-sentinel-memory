@@ -109,6 +109,14 @@ export async function run({action='prepare',env=process.env,fetcher=fetch,memwal
   if(action==='prepare')return {report:base,episodes};
   if(!['verify','seed'].includes(action))throw Error('Unknown command');
   if(action==='seed' && env.MEMWAL_ALLOW_MAINNET_WRITES!==ALLOW_WRITES)throw Error('MAINNET_WRITE_GUARD_DISABLED');
+  if(action==='seed'){
+    let prior=null;
+    try{prior=JSON.parse(await readFile(OUT,'utf8'))}catch(error){
+      if(error.code!=='ENOENT')throw Error('EXISTING_RECEIPT_UNREADABLE');
+    }
+    if(prior?.records?.some(x=>['ACCEPTED','UNCERTAIN_ACCEPTED'].includes(x.status)))
+      throw Error('UNRESOLVED_PREVIOUS_JOB');
+  }
   const client=memwal||await getClient(env);
   // Signed authentication check before any writes.
   await client.recall({query:'WAL Sentinel historical market research memory',limit:1,namespace:NAMESPACE});
