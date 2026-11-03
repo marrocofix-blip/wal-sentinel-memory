@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-03T07:10:41.716Z",
+  "mode": {
+    "readOnly": true,
+    "paper": true,
+    "realOrders": false
+  },
+  "marketSignal": "UNKNOWN",
+  "tatum": {
+    "status": "BLOCKED",
+    "checkpointHeight": null,
+    "reason": "TATUM_API_KEY missing"
+  },
+  "walrus": {
+    "status": "PASS",
+    "namespace": "wal-sentinel-memory-v1",
+    "recordId": "WAL-SENTINEL-MAINNET-TEST-20261103-001",
+    "recalled": true,
+    "exactTextVerified": true,
+    "recalledMemory": "WAL-SENTINEL-MAINNET-TEST-20261103-001 | WAL SENTINEL MEMORY persistent memory verification. This is a single authorized test record. No trading, no private credentials, no financial instructions.",
+    "evidence": "recorded-official-mcp-observation",
+    "observedAt": "2026-11-03T07:08:40.000Z"
+  },
+  "walrusHealth": {
+    "status": "PASS",
+    "observedAt": "2026-11-03T07:08:40.000Z"
+  },
+  "status": "BLOCKED",
+  "execution": "LIVE",
+  "walrusExecution": "RECORDED_MCP_REPLAY",
+  "authenticatedMainnetProof": false
+}

@@ -1,0 +1,16 @@
+{
+  "source": "official-memwal-mcp",
+  "observedAt": "2026-11-03T07:08:40.000Z",
+  "health": {
+    "status": "ok",
+    "version": "0.1.0"
+  },
+  "recall": {
+    "content": [
+      {
+        "type": "text",
+        "text": "1. [score=0.828 distance=0.172] [written=2026-11-03] WAL-SENTINEL-MAINNET-TEST-20261103-001 | WAL SENTINEL MEMORY persistent memory verification. This is a single authorized test record. No trading, no private credentials, no financial instructions."
+      }
+    ]
+  }
+}

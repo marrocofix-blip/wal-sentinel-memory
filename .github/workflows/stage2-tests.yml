@@ -1,0 +1,25 @@
+name: Stage 2 read-only integration tests
+on:
+  push:
+    paths:
+      - 'integrations/unified*'
+      - 'integrations/demo.mjs'
+      - '.github/workflows/stage2-tests.yml'
+  pull_request:
+    paths:
+      - 'integrations/unified*'
+      - 'integrations/demo.mjs'
+      - '.github/workflows/stage2-tests.yml'
+permissions:
+  contents: read
+jobs:
+  mocked-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --ignore-scripts
+      - run: npm test
+      - run: node integrations/demo.mjs --mock
