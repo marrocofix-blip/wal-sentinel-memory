@@ -2,6 +2,7 @@ name: Walrus Memory Mainnet check
 
 on:
   push:
+    branches: [main]
     paths:
       - 'integrations/memory.mjs'
       - 'tests/memory.test.mjs'
@@ -25,7 +26,7 @@ jobs:
       - name: Run memory integration unit tests (no network writes)
         run: npm test
       - name: Validate required secrets
-        if: github.event_name == 'workflow_dispatch'
+        if: github.repository == 'marrocofix-blip/wal-sentinel-memory' && github.ref == 'refs/heads/main'
         env:
           MEMWAL_PRIVATE_KEY: ${{ secrets.MEMWAL_PRIVATE_KEY }}
           MEMWAL_ACCOUNT_ID: ${{ secrets.MEMWAL_ACCOUNT_ID }}
@@ -41,7 +42,7 @@ jobs:
           fi
           echo "Required secrets are configured."
       - name: Verify authenticated Walrus Memory recall (read-only)
-        if: github.event_name == 'workflow_dispatch'
+        if: github.repository == 'marrocofix-blip/wal-sentinel-memory' && github.ref == 'refs/heads/main'
         env:
           MEMWAL_PRIVATE_KEY: ${{ secrets.MEMWAL_PRIVATE_KEY }}
           MEMWAL_ACCOUNT_ID: ${{ secrets.MEMWAL_ACCOUNT_ID }}

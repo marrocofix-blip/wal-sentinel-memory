@@ -49,3 +49,28 @@ test("acceptance alone is not proof of storage", async () => {
     waitForRememberJob: async () => ({ status: "running" })
   }, "policy"), /without blob_id/);
 });
+
+test("health requires authenticated recall and propagates a 401 without writes", async () => {
+  const calls = [];
+  const rejection = Object.assign(new Error("synthetic unauthorized"), { status: 401 });
+  const client = {
+    health: async () => { calls.push("health"); },
+    recall: async () => { calls.push("recall"); throw rejection; },
+    remember: async () => { throw new Error("Unexpected paid write"); }
+  };
+  await assert.rejects(run("health", { memwal: client }), error => error === rejection);
+  assert.deepEqual(calls, ["health", "recall"]);
+});
+test("health succeeds only after authenticated recall completes", async () => {
+  const calls = [];
+  await run("health", { memwal: {
+    health: async () => { calls.push("health"); },
+    recall: async options => {
+      calls.push("recall");
+      assert.equal(options.limit, 1);
+      return { results: [], total: 0 };
+    },
+    remember: async () => { throw new Error("Unexpected paid write"); }
+  } });
+  assert.deepEqual(calls, ["health", "recall"]);
+});

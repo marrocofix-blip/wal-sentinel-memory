@@ -38,8 +38,8 @@ Unexpected SDK errors are not printed verbatim.
 
 ## Tests and cost gate
 
-npm test runs mocked tests. Push-triggered CI runs tests without passing Secrets to dependency installation or tests.
-Manual workflow runs additionally perform health plus authenticated recall.
+npm test runs mocked tests. CI runs normal tests/*.test.mjs files through npm test without passing Secrets to dependency installation or tests.
+Pushes to main and manual workflow runs on main additionally perform health plus authenticated recall using step-scoped GitHub Secrets.
 No CI path writes memory.
 
 After explicit approval of account usage costs, use a trusted runtime with the two credentials provided as environment variables:
