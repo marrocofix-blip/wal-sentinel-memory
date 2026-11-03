@@ -36,7 +36,7 @@ test('prediction accuracy uses exact future candle timestamp',()=>{
   assert.deepEqual(accuracy(rows),{evaluated:2,correct:1,percentage:50});
 });
 test('no market observation means no accuracy score',()=>{
-  const rows=evaluatePredictions([{id:'a',predictedAt:'2026-11-03T00:00:00Z',direction:'UP',entryPrice:.04,targetCloseTime:target999999}],[]);
+  const rows=evaluatePredictions([{id:'a',predictedAt:'2026-11-03T00:00:00Z',direction:'UP',entryPrice:.04,targetCloseTime:Date.parse('2026-11-03T00:14:59.999Z')}],[]);
   assert.equal(rows[0].result,'PENDING');
   assert.equal(accuracy(rows).percentage,null);
 });
