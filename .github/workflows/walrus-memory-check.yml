@@ -5,7 +5,8 @@ on:
     branches: [main]
     paths:
       - 'integrations/memory.mjs'
-      - 'tests/memory.test.mjs'
+      - 'integrations/memory-diagnostics.mjs'
+      - 'tests/*.test.mjs'
       - '.github/workflows/walrus-memory-check.yml'
   workflow_dispatch:
 
@@ -41,9 +42,11 @@ jobs:
             exit 1
           fi
           echo "Required secrets are configured."
-      - name: Verify authenticated Walrus Memory recall (read-only)
+      - name: Derive SDK public key, compare Dashboard references and authenticate (read-only)
         if: github.repository == 'marrocofix-blip/wal-sentinel-memory' && github.ref == 'refs/heads/main'
         env:
           MEMWAL_PRIVATE_KEY: ${{ secrets.MEMWAL_PRIVATE_KEY }}
           MEMWAL_ACCOUNT_ID: ${{ secrets.MEMWAL_ACCOUNT_ID }}
-        run: node integrations/memory.mjs health
+          MEMWAL_EXPECTED_DELEGATE_PUBLIC_KEY: ${{ vars.MEMWAL_EXPECTED_DELEGATE_PUBLIC_KEY }}
+          MEMWAL_EXPECTED_ACCOUNT_ID: ${{ vars.MEMWAL_EXPECTED_ACCOUNT_ID }}
+        run: node integrations/memory-diagnostics.mjs
