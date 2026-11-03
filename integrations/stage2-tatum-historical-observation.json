@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "execution": "HISTORICAL",
+  "source": "USER_PROVIDED_POWERSHELL_OUTPUT",
+  "provider": "Tatum",
+  "network": "sui-mainnet",
+  "protocol": "grpc",
+  "checkpointHeight": "341126670",
+  "verifiedAt": "2026-11-03T07:19:38.100Z",
+  "verifiedAtMeaning": "Historical local verification time reported by the user; not a checkpoint chain timestamp",
+  "checkpointTimestampUtc": null,
+  "exitCode": 0,
+  "reportedOutcome": "PASS",
+  "independentlyVerifiedThisUpdate": false,
+  "freshLiveCheckPerformed": false,
+  "rawOutputAvailable": false,
+  "provenanceNote": "User supplied the checkpoint height, verifiedAt and exit code from a previous successful PowerShell run; no complete raw transcript was supplied in this update.",
+  "blockedSessionReport": "stage2-report.json",
+  "integrationStatus": "BLOCKED",
+  "authenticatedMainnetProof": false,
+  "marketSignal": "UNKNOWN",
+  "mode": {
+    "readOnly": true,
+    "paper": true,
+    "realOrders": false
+  },
+  "newWalrusWrites": 0,
+  "transactions": 0
+}
