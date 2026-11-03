@@ -5,6 +5,7 @@ import { resolve } from 'node:path';
 import { historicalEvidence, parseBinanceCandles } from './core.mjs';
 
 const PORT = Number(process.env.PORT || 4173);
+const HOST = process.env.RAILWAY_ENVIRONMENT ? '0.0.0.0' : '127.0.0.1';
 const here = new URL('./', import.meta.url);
 const respond = (res, status, data, type = 'application/json; charset=utf-8') => {
   res.writeHead(status, { 'content-type': type, 'cache-control': 'no-store', 'x-content-type-options': 'nosniff', 'content-security-policy': "default-src 'self'; style-src 'self'; script-src 'self'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; object-src 'none'" });
@@ -32,6 +33,7 @@ async function route(req, res) {
     catch { return respond(res, 503, { status: 'UNAVAILABLE', error: 'Public market source unavailable; do not substitute mock candles' }); }
   }
   if (path === '/api/tatum-live') {
+    if (process.env.ENABLE_TATUM_LIVE !== 'true') return respond(res, 403, { status: 'DISABLED', reason: 'Live Tatum check disabled for public demo' });
     if (!process.env.TATUM_API_KEY) return respond(res, 503, { status: 'BLOCKED', reason: 'TATUM_API_KEY missing from dashboard server environment' });
     try {
       const { checkTatumGrpc } = await import('../integrations/tatum-grpc.mjs');
@@ -51,7 +53,7 @@ async function route(req, res) {
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  http.createServer((req, res) => { route(req, res).catch(() => respond(res, 500, { error: 'Unexpected server error' })); }).listen(PORT, '127.0.0.1', () => {
+  http.createServer((req, res) => { route(req, res).catch(() => respond(res, 500, { error: 'Unexpected server error' })); }).listen(PORT, HOST, () => {
     console.log('WAL SENTINEL MEMORY dashboard: http://127.0.0.1:' + PORT);
   });
 }
