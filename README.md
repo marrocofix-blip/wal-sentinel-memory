@@ -26,11 +26,11 @@ The public Vercel deployment is an independently published **static preview**. I
 
 ## Stage 3 — Evidence-first web dashboard
 
-A responsive read-only research dashboard is included under `dashboard/`. It shows:
+A redesigned, responsive read-only research terminal is included under `dashboard/`. It shows:
 - a **historical** Tatum Sui Mainnet checkpoint (reported from a prior successful PowerShell session, **not a fresh live reading**);
 - the **recorded** Walrus MCP exact-text recall evidence (not independent blob proof);
-- optional public Binance **WAL/USDT 15m closed candles**, identified as indicative and **not Revolut X**;
-- a browser-local prediction journal; a prediction is **PENDING** until its exact target closed candle is available and can be evaluated;
+- actual, closed public WAL/USDT spot candles at **5m, 15m, 1h and 4h** (Binance Spot, Gate Spot fallback), with candle/line views, volume, EMA 9/30/200, RSI 14 and MACD 12/26/9. This is **indicative exchange market data**, not a Revolut X execution feed;
+- an interactive browser-local 15-minute prediction journal with JSON export; a prediction stays **PENDING** until its exact target closed candle is available and can be evaluated;
 - an optional **separate** live read-only Tatum gRPC check when `TATUM_API_KEY` is set in the local server process.
 
 ### Launch on your Windows PC
@@ -49,7 +49,7 @@ To test:
 npm.cmd test
 ```
 
-The dashboard server binds to **127.0.0.1** (local only). Its API uses GET-only routes; no server-side prediction writes, wallet operations, transactions, or real trading. Predictions are saved **only in the browser's local storage**, not in Walrus; clearing site data removes the journal. The market endpoint can be unavailable due to network, provider, or regional restrictions; it does not substitute synthetic live data. Clicking the optional Tatum LIVE check requires a local `TATUM_API_KEY` in the **server process**; the key is never sent to the browser.
+The dashboard server binds to **127.0.0.1** (local only). Its API uses GET-only routes; no server-side prediction writes, wallet operations, transactions, or real trading. Predictions are saved **only in the browser's local storage**, not in Walrus; clearing site data removes the journal. The public terminal prefers a same-origin no-key market endpoint (Vercel production or the local Node server) and falls back to official public spot sources; prices may be unavailable due to network/provider/region conditions and never use synthetic fallback. The journal is browser-local and can be exported as JSON but is not yet persisted in Walrus. Clicking the optional Tatum LIVE check requires a local `TATUM_API_KEY` in the **server process**; the key is never sent to the browser.
 
 ### Provenance and limitations
 
