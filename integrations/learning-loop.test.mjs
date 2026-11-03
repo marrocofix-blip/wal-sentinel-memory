@@ -1,0 +1,13 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {ANCHOR, episodesFromCandles, run, summarize} from './learning-loop.mjs';
+const start=ANCHOR-20*900000;
+const bars=Array.from({length:18},(_,i)=>({openTime:start+i*900000,closeTime:start+(i+1)*900000-1,close:0.028+i*0.00004+(i%3===0?0.00006:0)}));
+const rows=bars.map(c=>[c.openTime,String(c.close),String(c.close+0.0002),String(c.close-0.0002),String(c.close),'1000',c.closeTime]);
+const fetcher=async()=>({ok:true,json:async()=>rows});
+test('historical episodes are distinct and based on closed candles',()=>{const e=episodesFromCandles(bars,'Binance Spot');assert.equal(e.length,10);assert.equal(new Set(e.map(x=>x.id)).size,10);assert.ok(e.every(x=>x.closeTime<ANCHOR));});
+test('reject unsupported or insufficient market evidence',()=>{assert.throws(()=>episodesFromCandles(bars,'Other'));assert.throws(()=>episodesFromCandles(bars.slice(0,4),'Binance Spot'));});
+test('preparation does not claim completed memories',async()=>{const e=await run({action:'prepare',fetcher});assert.equal(e.report.records.length,10);assert.equal(e.report.mainnetWriteCountClaim,0);});
+test('seed is blocked without explicit authorization',async()=>{await assert.rejects(run({action:'seed',fetcher,env:{}}),/MAINNET_WRITE_GUARD_DISABLED/);});
+test('verification reuses exact matching records and does not submit new memories',async()=>{const known=episodesFromCandles(bars,'Binance Spot');const memwal={recall:async({query})=>({results:known.filter(x=>x.text===query).map(x=>({text:x.text,blob_id:'blob-'+x.id}))})};const out=await run({action:'verify',fetcher,memwal,writeReport:async()=>{}});assert.equal(out.report.status,'VERIFIED_10_BLOBS');assert.equal(out.report.summary.uniqueBlobs,10);});
+test('summary ignores unverified research episodes',()=>{assert.equal(summarize([{status:'VERIFIED',blob_id:'a',correct:true},{status:'NOT_FOUND',correct:false}]).historicalBaselineAccuracy,100);});
