@@ -1,0 +1,16 @@
+{
+  "name": "wal-sentinel-memory",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "tatum:check": "node integrations/tatum.mjs",
+    "memory:check": "node integrations/memory.mjs health",
+    "memory:seed": "node integrations/memory.mjs seed",
+    "memory:recall": "node integrations/memory.mjs recall"
+  },
+  "dependencies": {
+    "@mysten-incubation/memwal": "latest"
+  }
+}
