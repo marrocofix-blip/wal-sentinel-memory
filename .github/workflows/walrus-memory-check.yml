@@ -1,6 +1,11 @@
 name: Walrus Memory Mainnet check
 
 on:
+  push:
+    paths:
+      - 'integrations/memory.mjs'
+      - 'tests/memory.test.mjs'
+      - '.github/workflows/walrus-memory-check.yml'
   workflow_dispatch:
 
 permissions:
@@ -10,15 +15,20 @@ jobs:
   verify-memory:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    env:
-      MEMWAL_PRIVATE_KEY: ${{ secrets.MEMWAL_PRIVATE_KEY }}
-      MEMWAL_ACCOUNT_ID: ${{ secrets.MEMWAL_ACCOUNT_ID }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Run memory integration unit tests (no network writes)
+        run: npm test
       - name: Validate required secrets
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          MEMWAL_PRIVATE_KEY: ${{ secrets.MEMWAL_PRIVATE_KEY }}
+          MEMWAL_ACCOUNT_ID: ${{ secrets.MEMWAL_ACCOUNT_ID }}
         shell: bash
         run: |
           if [ -z "$MEMWAL_PRIVATE_KEY" ]; then
@@ -30,7 +40,9 @@ jobs:
             exit 1
           fi
           echo "Required secrets are configured."
-      - name: Install dependencies
-        run: npm install --no-audit --no-fund
       - name: Verify authenticated Walrus Memory recall (read-only)
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          MEMWAL_PRIVATE_KEY: ${{ secrets.MEMWAL_PRIVATE_KEY }}
+          MEMWAL_ACCOUNT_ID: ${{ secrets.MEMWAL_ACCOUNT_ID }}
         run: node integrations/memory.mjs health
