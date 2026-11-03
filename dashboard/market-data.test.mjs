@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { normalizeBinance,normalizeGate,loadPublicMarket,TIMEFRAMES } from './market-data.mjs';
+const now=Date.parse('2026-11-03T12:00:00Z');
+const binance=(at,open,close)=>[at,String(open),String(Math.max(open,close)*1.01),String(Math.min(open,close)*.99),String(close),'1000',at+TIMEFRAMES['15m']-1];
+test('normalizes only verified closed Binance spot candles, sorted',()=>{const rows=[binance(now-900000,.04,.042),binance(now-1800000,.041,.04),binance(now,.05,.052)];const data=normalizeBinance(rows,'15m',now);assert.equal(data.length,2);assert.equal(data[0].close,.04);assert.equal(data[1].close,.042)});
+test('rejects incorrect or future Binance candles',()=>{const rows=[binance(now,.04,.042),binance(now-2700000,.04,.042),[now-4000000,'0.04','0.01','0.05','0.045','1',now-3300000]];assert.equal(normalizeBinance(rows,'15m',now).length,1)});
+test('normalizes Gate trading candles only after close',()=>{const rows=[[String((now-1800000)/1000),'2300','0.042','0.043','0.039','0.04'],[String((now-450000)/1000),'500','0.045','0.047','0.044','0.046']];const data=normalizeGate(rows,'15m',now);assert.equal(data.length,1);assert.equal(data[0].close,.042)});
+test('loads public data with provider evidence and no fabricated fallback',async()=>{const rows=[binance(now-1800000,.04,.041),binance(now-900000,.041,.042)];const data=await loadPublicMarket('15m',async()=>({ok:true,json:async()=>rows}),now);assert.equal(data.status,'PUBLIC_INDICATIVE');assert.equal(data.candles.length,2);assert.equal(data.provider,'Binance Spot');assert.equal(data.closedOnly,true)});
+test('rejects unsupported timeframes and unavailable providers',async()=>{await assert.rejects(loadPublicMarket('1m',async()=>({ok:true,json:async()=>[]})),/Unsupported/);await assert.rejects(loadPublicMarket('5m',async()=>({ok:false}),now),/unavailable/)});
