@@ -1,6 +1,7 @@
 import http from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { historicalEvidence, parseBinanceCandles } from './core.mjs';
 
 const PORT = Number(process.env.PORT || 4173);
@@ -49,7 +50,7 @@ async function route(req, res) {
   respond(res, 404, { error: 'Not found' });
 }
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === fileURLToPath(new URL('file://' + process.argv[1].replace(/\\/g, '/')).href)) {
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   http.createServer((req, res) => { route(req, res).catch(() => respond(res, 500, { error: 'Unexpected server error' })); }).listen(PORT, '127.0.0.1', () => {
     console.log('WAL SENTINEL MEMORY dashboard: http://127.0.0.1:' + PORT);
   });
