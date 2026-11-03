@@ -1,0 +1,29 @@
+name: Free Walrus Mainnet preflight (no writes)
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'integrations/learning-loop.mjs'
+      - 'integrations/learning-loop.test.mjs'
+      - '.github/workflows/mainnet-preflight.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  prepare-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Run offline mock safety checks
+        run: npm test
+      - name: Prepare ten historical market episodes from real public feed
+        run: node integrations/learning-loop.mjs prepare
+      - name: Confirm no writes or credentials
+        run: |
+          echo "Only preparation performed; no Walrus remember, wallet, or transaction calls."
+          echo "10 distinct historical episodes require separate exact blob receipts to count for the hackathon."
