@@ -1,0 +1,34 @@
+name: Stage 3 dashboard tests
+on:
+  push:
+    paths:
+      - 'dashboard/**'
+      - 'package.json'
+      - '.github/workflows/stage3-dashboard.yml'
+  pull_request:
+    paths:
+      - 'dashboard/**'
+      - 'package.json'
+      - '.github/workflows/stage3-dashboard.yml'
+permissions:
+  contents: read
+jobs:
+  dashboard-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --ignore-scripts
+      - run: npm test
+      - name: Smoke-test read-only web server
+        run: |
+          node dashboard/server.mjs > /tmp/wal-dashboard.log 2>&1 &
+          for i in 1 2 3 4 5; do
+            if curl -fsS http://127.0.0.1:4173/ > /tmp/wal-page.html; then break; fi
+            sleep 1
+          done
+          grep -q 'WAL SENTINEL MEMORY' /tmp/wal-page.html
+          curl -fsS http://127.0.0.1:4173/api/evidence > /tmp/wal-evidence.json
+          node --input-type=module -e "import{readFileSync}from 'node:fs';const x=JSON.parse(readFileSync('/tmp/wal-evidence.json'));if(x.integration.status!=='NOT_VERIFIED_LIVE')process.exit(1)"
