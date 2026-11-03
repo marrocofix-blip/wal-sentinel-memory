@@ -3,6 +3,8 @@ on:
   push:
     paths:
       - 'dashboard/**'
+      - 'integrations/learning-loop.mjs'
+      - 'integrations/learning-loop.test.mjs'
       - 'package.json'
       - 'scripts/build-static.mjs'
       - 'api/market.js'
@@ -10,6 +12,8 @@ on:
   pull_request:
     paths:
       - 'dashboard/**'
+      - 'integrations/learning-loop.mjs'
+      - 'integrations/learning-loop.test.mjs'
       - 'package.json'
       - '.github/workflows/stage3-dashboard.yml'
 permissions:
