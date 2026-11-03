@@ -43,7 +43,7 @@ export async function getLatestCheckpoint({ apiKey = process.env.TATUM_API_KEY, 
   }
   const data = await response.json();
   if (data.error) throw new Error("Tatum RPC error: " + data.error.code + ": " + data.error.message);
-  if (!/^\\d+$/.test(String(data.result))) {
+  if (!/^\d+$/.test(String(data.result))) {
     throw new Error("Unexpected Tatum checkpoint response");
   }
   return {
