@@ -25,7 +25,7 @@ export async function diagnose(env = process.env, suppliedClient) {
   const keyText = config.key.trim();
   // Format-only checks; never log lengths, prefixes, partial keys or credentials.
   const keyCompatible = /^(?:0x)?[a-fA-F0-9]{64}$/.test(keyText) || /^suiprivkey1[023456789acdefghjklmnpqrstuvwxyz]+$/.test(keyText);
-  if(!keyCompatible) throw new Error("INVALID_DELEGATE_FORMAT");
+  if(!suppliedClient && !keyCompatible) throw new Error("INVALID_DELEGATE_FORMAT");
   const memwal = suppliedClient ?? (await import("@mysten-incubation/memwal")).MemWal.create(config);
   // Official SDK derives the PUBLIC key. Never log the key, config, env, or raw errors.
   const publicKey = canonicalHex(await memwal.getPublicKeyHex());
