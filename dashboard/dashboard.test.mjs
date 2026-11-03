@@ -30,7 +30,7 @@ test('prediction accuracy uses exact future candle timestamp',()=>{
   const rows = evaluatePredictions([
     {id:'a',predictedAt:'2026-11-03T00:00:00.000Z',direction:'UP',entryPrice:0.04,targetCloseTime:target},
     {id:'b',predictedAt:'2026-11-03T00:00:00.000Z',direction:'DOWN',entryPrice:0.04,targetCloseTime:target},
-    {id:'c',predictedAt:'2026-11-03T00:00:00.000Z',direction:'UP',entryPrice:0.04,targetCloseTime:9999999}
+    {id:'c',predictedAt:'2026-11-03T00:00:00.000Z',direction:'UP',entryPrice:0.04,targetCloseTime:target+900000}
   ],[{closeTime:target,close:0.041}]);
   assert.deepEqual(rows.map(x=>x.result),['CORRECT','INCORRECT','PENDING']);
   assert.deepEqual(accuracy(rows),{evaluated:2,correct:1,percentage:50});
