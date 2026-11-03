@@ -21,7 +21,13 @@ function fingerprint(hex) {
 }
 
 export async function diagnose(env = process.env, suppliedClient) {
-  const config = configuration(env);
+  // Recover an invalid/mis-pasted secret account ID from the configured
+  // *public* Dashboard reference, but only for this read-only identity test.
+  // Signed recall must still authenticate with the delegate before PASS.
+  const fromSecret = (env.MEMWAL_ACCOUNT_ID ?? "").trim();
+  const fromDashboard = (env.MEMWAL_EXPECTED_ACCOUNT_ID ?? "").trim();
+  const useReference = !/^0x[0-9a-fA-F]{64}$/.test(fromSecret) && /^0x[0-9a-fA-F]{64}$/.test(fromDashboard);
+  const config = configuration(useReference ? {...env, MEMWAL_ACCOUNT_ID:fromDashboard} : env);
   const keyText = config.key.trim();
   // Format-only checks; never log lengths, prefixes, partial keys or credentials.
   const keyCompatible = /^(?:0x)?[a-fA-F0-9]{64}$/.test(keyText) || /^suiprivkey1[023456789acdefghjklmnpqrstuvwxyz]+$/.test(keyText);
@@ -32,6 +38,7 @@ export async function diagnose(env = process.env, suppliedClient) {
   if (!publicKey) throw new Error("Invalid SDK public key.");
   const report = {
     network: "mainnet",
+    accountIdSource: useReference ? "PUBLIC_DASHBOARD_REFERENCE_FALLBACK" : "CONFIGURED_ACCOUNT_SECRET",
     delegateLabel: "WAL-SENTINEL-MAINNET",
     publicKeyDerivation: "PASS",
     publicKeySha256Prefix: fingerprint(publicKey),
