@@ -126,6 +126,7 @@ export async function run({action='prepare',env=process.env,fetcher=fetch,memwal
         const job=await client.remember(episode.text);
         result.job_id=job.job_id;
         result.status='ACCEPTED';
+        // Persist accepted job before waiting, but do not duplicate the row on failure.
         receipts.push(result);
         base.records=receipts;
         await persist(base,writeReport);
@@ -139,7 +140,8 @@ export async function run({action='prepare',env=process.env,fetcher=fetch,memwal
       }else{result.status='NOT_FOUND'}
     }catch(error){
       result.status=result.status==='ACCEPTED'?'UNCERTAIN_ACCEPTED':'READ_FAILED';
-      result.errorCode=noSecrets(error);receipts.push(result);
+      result.errorCode=noSecrets(error);
+      if(!receipts.includes(result))receipts.push(result);
       base.records=receipts;base.summary=summarize(receipts);
       base.mainnetWriteCountClaim=base.summary.uniqueBlobs;
       await persist(base,writeReport);
