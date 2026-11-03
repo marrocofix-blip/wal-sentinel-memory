@@ -22,6 +22,10 @@ function fingerprint(hex) {
 
 export async function diagnose(env = process.env, suppliedClient) {
   const config = configuration(env);
+  const keyText = config.key.trim();
+  // Format-only checks; never log lengths, prefixes, partial keys or credentials.
+  const keyCompatible = /^(?:0x)?[a-fA-F0-9]{64}$/.test(keyText) || /^suiprivkey1[023456789acdefghjklmnpqrstuvwxyz]+$/.test(keyText);
+  if(!keyCompatible) throw new Error("INVALID_DELEGATE_FORMAT");
   const memwal = suppliedClient ?? (await import("@mysten-incubation/memwal")).MemWal.create(config);
   // Official SDK derives the PUBLIC key. Never log the key, config, env, or raw errors.
   const publicKey = canonicalHex(await memwal.getPublicKeyHex());
@@ -68,8 +72,13 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   diagnose().then(report => {
     console.log(JSON.stringify(report, null, 2));
     if (report.dashboardAccountPair !== "PASS" || report.relayerHealth !== "PASS") process.exitCode = 1;
-  }).catch(() => {
-    console.error("FAIL: Read-only identity diagnostic could not initialize; check credential format. No secret values logged.");
+  }).catch(error => {
+    const message = String(error?.message || '');
+    const category = message === 'INVALID_DELEGATE_FORMAT' ? 'DELEGATE_SECRET_FORMAT_INVALID' :
+      /Missing MEMWAL_PRIVATE_KEY/.test(message) ? 'REQUIRED_SECRET_MISSING' :
+      /MEMWAL_ACCOUNT_ID must/.test(message) ? 'MEMORY_ACCOUNT_ID_FORMAT_INVALID' :
+      'SDK_INITIALIZATION_OR_NETWORK_FAILED';
+    console.error("FAIL: Walrus Memory diagnostic:", category, "- check dashboard credentials. No credential content or lengths logged.");
     process.exitCode = 1;
   });
 }
