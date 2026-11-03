@@ -28,8 +28,10 @@ async function client() {
 export async function run(action) {
   const memwal = await client();
   if (action === "health") {
-    const result=await memwal.health();
-    console.log("Mainnet relayer health:",JSON.stringify(result));
+    await memwal.health();
+    console.log("PASS: Walrus Memory relayer reachable");
+    await memwal.recall({ query: "WAL SENTINEL MEMORY connection check", limit: 1 });
+    console.log("PASS: Walrus Memory authenticated recall succeeded");
   } else if (action === "seed") {
     // 10 real Mainnet writes, explicit invocation only; may incur account usage.
     const proofs=[];
