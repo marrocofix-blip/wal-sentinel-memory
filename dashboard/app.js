@@ -5,7 +5,7 @@ const NS='http://www.w3.org/2000/svg';
 const STORE='wal-sentinel-memory-journal-v2';
 const oldStore='wal-sentinel-memory-journal-v1';
 let tf='15m',chartMode='candles',candles=[],journal=[],marketCache=new Map(),lastFetch=0,chartPointer=null,refreshBusy=false;
-const fmt=(v,d=8)=>Number.isFinite(Number(v))?Number(v).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}):'—';
+const fmt=(v,d=8)=>v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v))?Number(v).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}):'—';
 const compact=v=>Number.isFinite(Number(v))?new Intl.NumberFormat('en-US',{notation:'compact',maximumFractionDigits:2}).format(Number(v)):'—';
 const date=v=>Number.isFinite(Number(v))?new Date(Number(v)).toISOString().replace('T',' ').slice(0,16)+' UTC':'—';
 const set=(id,text)=>{const e=$(id);if(e)e.textContent=String(text)};
