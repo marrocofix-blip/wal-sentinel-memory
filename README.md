@@ -14,6 +14,38 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
+
+## Stage 3 — Evidence-first web dashboard
+
+A responsive read-only research dashboard is included under \`dashboard/\`. It shows:
+- a **historical** Tatum Sui Mainnet checkpoint (reported from a prior successful PowerShell session, **not a fresh live reading**);
+- the **recorded** Walrus MCP exact-text recall evidence (not independent blob proof);
+- optional public Binance **WAL/USDT 15m closed candles**, identified as indicative and **not Revolut X**;
+- a browser-local prediction journal; a prediction is **PENDING** until its exact target closed candle is available and can be evaluated;
+- an optional **separate** live read-only Tatum gRPC check when \`TATUM_API_KEY\` is set in the local server process.
+
+### Launch on your Windows PC
+
+Open PowerShell in \`D:\source\WAL_SENTINEL_MEMORY\` **only after obtaining/updating the actual GitHub working tree** (a folder without \`.git\` is not synchronized with GitHub):
+
+\`\`\`powershell
+npm.cmd install
+npm.cmd run dashboard
+\`\`\`
+
+Open **http://127.0.0.1:4173** in your browser.
+
+To test:
+\`\`\`powershell
+npm.cmd test
+\`\`\`
+
+The dashboard server binds to **127.0.0.1** (local only). Its API uses GET-only routes; no server-side prediction writes, wallet operations, transactions, or real trading. Predictions are saved **only in the browser's local storage**, not in Walrus; clearing site data removes the journal. The market endpoint can be unavailable due to network, provider, or regional restrictions; it does not substitute synthetic live data. Clicking the optional Tatum LIVE check requires a local \`TATUM_API_KEY\` in the **server process**; the key is never sent to the browser.
+
+### Provenance and limitations
+
+This dashboard is a **local prototype**, not yet an internet-hosted public demo. It does **not** claim a simultaneous live Tatum + Walrus check, an independently verified Walrus blob receipt, at least 10 Mainnet records, or a proven prediction-accuracy history. Tatum and Walrus prior evidence remains immutable and separately labeled. Market candles are public external data; they are not guaranteed available. Prediction evaluation is observational and not investment advice.
+
 ## Compliance — not completed
 - [ ] Walrus Memory Mainnet read/write integration and evidence
 - [ ] At least 10 real Mainnet memory records
