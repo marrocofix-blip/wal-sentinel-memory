@@ -15,6 +15,15 @@ streamlit run app.py
 ```
 
 
+## Public demo and submission materials
+
+**Live public demo:** https://wal-sentinel-memory.vercel.app/  
+**Published project story:** https://wal-sentinel-memory.vercel.app/story.html  
+**Demo video storyboard:** [docs/DEMO_VIDEO_SCRIPT.md](docs/DEMO_VIDEO_SCRIPT.md)  
+**Submission readiness / missing requirements:** [docs/SUBMISSION_READINESS.md](docs/SUBMISSION_READINESS.md)
+
+The public Vercel deployment is an independently published **static preview**. It has no server-side API keys or wallet access. It shows the previously verified historical Tatum observation and recorded Walrus MCP recall as such. It does **not** yet establish ten real Mainnet memories or a live memory-backed learning loop.
+
 ## Stage 3 — Evidence-first web dashboard
 
 A responsive read-only research dashboard is included under `dashboard/`. It shows:
@@ -52,8 +61,8 @@ This dashboard is a **local prototype**, not yet an internet-hosted public demo.
 - [ ] Tatum RPC usage for meaningful Sui on-chain data
 - [ ] Memory-backed prediction evaluation across sessions
 - [x] Public GitHub repository
-- [ ] Public live demo
-- [ ] Blog post and 2–3-minute demo video
+- [x] Public live demo (static preview only; incomplete end-to-end integration)
+- [ ] Published project story is available; actual 2–3-minute demo video not yet recorded
 - [ ] Official hackathon submission
 
 **This is an early prototype, not a completed hackathon entry.** Do not submit as compliant until live integrations and evidence are verified.
