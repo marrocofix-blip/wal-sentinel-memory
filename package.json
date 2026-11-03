@@ -11,7 +11,8 @@
     "memory:recall": "node integrations/memory.mjs recall",
     "tatum:grpc": "node integrations/tatum-grpc.mjs",
     "dashboard": "node dashboard/server.mjs",
-    "dashboard:test": "node --test dashboard/*.test.mjs"
+    "dashboard:test": "node --test dashboard/*.test.mjs",
+    "build:public": "node scripts/build-static.mjs"
   },
   "dependencies": {
     "@mysten-incubation/memwal": "latest",
