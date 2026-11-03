@@ -1,5 +1,24 @@
 # Stage 2: read-only Tatum + Walrus
 
+Final live session, 2026-11-03: **INTEGRATION BLOCKED**.
+TATUM_API_KEY was absent from Process, Windows User and Machine environments.
+The real gRPC entry point was attempted but rejected before sending a request.
+Checkpoint height and checkpoint UTC timestamp are therefore UNKNOWN (JSON null).
+The report's UTC observation time is a local clock time, not a chain timestamp.
+
+Official live MCP health and namespaced recall both passed. The complete returned
+test text matched EXPECTED_TEXT exactly. Health has no namespace argument;
+recall used wal-sentinel-memory-v1. No independent blob receipt was verified.
+
+The combined stage2-report.json now records this session's LIVE MCP observations
+separately from the MOCK tests/demo and the earlier RECORDED_MCP_REPLAY demo.
+It is assembled from actual tool observations, not presented as a standalone
+CLI live MCP connection. npm.cmd test: 8 PASS, 0 FAIL. Read-only live demo:
+BLOCKED; mock demo: PASS; recorded replay: Walrus PASS, integration BLOCKED.
+Only documentation and JSON evidence changed; no authentication code changed.
+The existing Actions path filter excludes these files, so this documentation
+commit does not establish a new CI run or authenticated Mainnet proof.
+
 Run in Windows PowerShell:
 
 ```powershell

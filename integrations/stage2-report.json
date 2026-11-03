@@ -1,6 +1,7 @@
 {
-  "schemaVersion": 2,
-  "generatedAt": "2026-11-03T07:10:41.716Z",
+  "schemaVersion": 3,
+  "generatedAt": "2026-11-03T07:21:23.426Z",
+  "execution": "LIVE_SESSION_OBSERVATIONS",
   "mode": {
     "readOnly": true,
     "paper": true,
@@ -9,25 +10,65 @@
   "marketSignal": "UNKNOWN",
   "tatum": {
     "status": "BLOCKED",
+    "execution": "NOT_EXECUTED_MISSING_CREDENTIAL",
+    "apiKeyAvailable": {
+      "process": false,
+      "windowsUser": false,
+      "windowsMachine": false
+    },
+    "commandAttempted": "node integrations/tatum-grpc.mjs",
+    "authenticatedRequestSent": false,
     "checkpointHeight": null,
-    "reason": "TATUM_API_KEY missing"
+    "checkpointTimestampUtc": null,
+    "reason": "TATUM_API_KEY missing; entry point rejected before network request"
   },
   "walrus": {
     "status": "PASS",
+    "execution": "LIVE_OFFICIAL_MCP",
     "namespace": "wal-sentinel-memory-v1",
     "recordId": "WAL-SENTINEL-MAINNET-TEST-20261103-001",
-    "recalled": true,
+    "observedAt": "2026-11-03T07:20:43.182Z",
     "exactTextVerified": true,
     "recalledMemory": "WAL-SENTINEL-MAINNET-TEST-20261103-001 | WAL SENTINEL MEMORY persistent memory verification. This is a single authorized test record. No trading, no private credentials, no financial instructions.",
-    "evidence": "recorded-official-mcp-observation",
-    "observedAt": "2026-11-03T07:08:40.000Z"
+    "evidence": "official MCP recall response; no independent blob receipt",
+    "blobProofVerified": false
   },
   "walrusHealth": {
     "status": "PASS",
-    "observedAt": "2026-11-03T07:08:40.000Z"
+    "execution": "LIVE_OFFICIAL_MCP",
+    "observedAt": "2026-11-03T07:20:43.182Z",
+    "version": "0.1.0",
+    "namespaceSupported": false
   },
-  "status": "BLOCKED",
-  "execution": "LIVE",
-  "walrusExecution": "RECORDED_MCP_REPLAY",
-  "authenticatedMainnetProof": false
+  "integration": {
+    "status": "BLOCKED",
+    "reason": "Live Tatum checkpoint not verified"
+  },
+  "verification": {
+    "tests": {
+      "command": "npm.cmd test",
+      "pass": 8,
+      "fail": 0,
+      "execution": "MOCK_UNIT_TESTS"
+    },
+    "readOnlyDemo": {
+      "execution": "LIVE",
+      "status": "BLOCKED",
+      "reason": "No Tatum key; standalone CLI has no MCP adapter"
+    },
+    "mockDemo": {
+      "execution": "MOCK",
+      "status": "PASS",
+      "syntheticCheckpointHeight": "123"
+    },
+    "replayDemo": {
+      "execution": "RECORDED_MCP_REPLAY",
+      "status": "BLOCKED",
+      "walrusStatus": "PASS",
+      "observationUtc": "2026-11-03T07:08:40.000Z"
+    }
+  },
+  "authenticatedMainnetProof": false,
+  "newWalrusWrites": 0,
+  "transactions": 0
 }
