@@ -25,10 +25,10 @@
 | Tatum Sui onchain data | Real local gRPC checkpoint 341126670 observed at 2026-11-03T07:19:38.100Z | HISTORICAL PASS, not combined live |
 | Walrus Memory retrieval | Official MCP named namespace and exact full record recalled | PASS for retrieval only |
 | Independently verified blob receipt | No blob ID / receipt provided | UNVERIFIED |
-| Minimum 10 **real Mainnet** memories | Only a single authorized write/retrieval test is known | **NOT MET** |
+| Minimum 10 **real Mainnet** memories | Guarded ten-episode relayer pipeline prepared; GitHub credential initialization failed on prior diagnostic, no verified receipts | **NOT MET** |
 | Memory-backed cross-session predictions | Currently browser localStorage | **NOT MET** |
 | Continuous live integrated Tatum + Walrus workflow | No simultaneous live proof | **NOT MET** |
-| Actual 2–3 min demo video | Recording script only | **NOT MET** |
+| Actual 2–3 min demo video | A 2:30 narrated illustrative MP4 was generated locally for review; not publicly hosted and not verified as an authentic live screen recording | **NOT MET** |
 | Official submitted application | No confirmed submission | **NOT MET** |
 
 ## Identity and form fields — supply from account dashboards
@@ -45,8 +45,17 @@ WAL Sentinel Memory is a research-oriented prediction journal that makes the pro
 
 ## Follow-up technical priorities
 
-1. Produce a reliable, independently checkable receipt for the previously authorized record where supported.
-2. Design nine distinct legitimate research memories that affect the product; do not invent stored entries or write without approval.
+1. Resolve the existing GitHub Secrets credential format or mismatched account/delegate pairing without exposing secrets. Existing read-only identity diagnostic failed before SDK initialization (2026-11-03).
+2. Review `integrations/learning-loop.mjs` and `docs/MAINNET_MEMORY_RUNBOOK.md`, which prepare ten distinct retrospective market-research episodes. Run read-only verification before any sponsored Mainnet memory writes; require actual distinct blob receipts.
 3. Integrate actual memory recall at prediction-evaluation time, with evidence across sessions.
-4. Record an authentic 2–3-minute demo and publish it.
+4. Review the generated narrated 2:30 illustrative MP4 and produce a real live-site screen recording to strengthen the application. Publish only the verified final video.
 5. Validate account identifiers and complete the official submission before the deadline.
+
+
+## Progress update — 2026-11-03
+
+- Live Vercel dashboard and no-key OHLC API deployed at the public URL above.
+- Historical closed-candle Walrus learning loop and mock-only test suite committed in GitHub, but no new on-chain writes or verified receipts completed.
+- Existing repository GitHub Actions Walrus diagnostic has required Secrets configured, but step `Derive SDK public key, compare Dashboard references and authenticate` failed with `Read-only identity diagnostic could not initialize; check credential format`. The secret values are unavailable to the assistant and must not be copied to chat or committed. The official SDK accepts a registered delegate private key and matching MemWalAccount object ID; mismatched or malformed credentials cannot be repaired by inventing replacements.
+- A narrated illustrative video MP4 has been generated in the ChatGPT conversation but is not an authenticated live-screen capture or externally hosted YouTube/video submission link.
+- **No official submission is claimed.**
