@@ -49,7 +49,7 @@ function renderJournal(){
   set('accuracy',completed.length?Math.round(100*correct/completed.length)+'%':'—');
   set('accuracy-sub',completed.length?correct+' correct / '+completed.length+' evaluated':'No evaluated predictions');
   set('journal-count',journal.length+' locally stored predictions');
-  if(!journal.length){const tr=document.createElement('tr');const td=document.createElement('td');td.colSpan=6;td.className='empty';td.textContent='No predictions saved. This is not trading advice.';tr.append(td);body.append(tr);return;}
+  if(!journal.length){const tr=document.createElement('tr');const td=document.createElement('td');td.colSpan=6;td.className='empty';td.textContent='No predictions yet. Add your first research hypothesis above.';tr.append(td);body.append(tr);return;}
   [...journal].reverse().forEach(p=>{
     const [status,actual]=result(p);
     const tr=document.createElement('tr');
@@ -69,13 +69,13 @@ async function market(){
   try {
     const data=await api('/api/market');candles=data.candles||[];
     set('market-price', '$'+price(candles.at(-1)?.close));
-    set('market-sub', 'Binance indicative · observed '+stamp(data.observedAt));
+    set('market-sub', 'Binance Spot · observed '+stamp(data.observedAt));
     set('market-count',candles.length+' verified closed candles');
     set('chart-time','Observed '+stamp(data.observedAt));
-    set('market-tag','PUBLIC FEED');
+    set('market-tag','MARKET DATA');
   } catch {
-    candles=[];set('market-price','UNAVAILABLE');set('market-sub','No live market source; no synthetic fallback');
-    set('market-tag','OFFLINE');set('market-count','0 verified closed candles');
+    candles=[];set('market-price','UNAVAILABLE');set('market-sub','Market data connection unavailable');
+    set('market-tag','UNAVAILABLE');set('market-count','No recent closed candles');
   }
   drawChart(candles);futureTargets();renderJournal();
 }
@@ -96,6 +96,6 @@ $('refresh').addEventListener('click',async()=>{await Promise.all([evidence(),ma
 $('check-tatum').addEventListener('click',async()=>{
   set('live-result','Checking Tatum via server (read-only)…');
   try { const d=await api('/api/tatum-live');set('live-result','LIVE PASS · '+d.checkpointHeight+' · '+stamp(d.observedAt)+' (separate check; not a combined Walrus proof)'); }
-  catch(e){set('live-result','LIVE BLOCKED / UNKNOWN · '+e.message);}
+  catch(e){set('live-result','CHECK UNAVAILABLE · '+e.message);}
 });
 await Promise.all([evidence(),market()]);
