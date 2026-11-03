@@ -3,12 +3,13 @@ import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 import { historicalEvidence, parseBinanceCandles } from './core.mjs';
+import { loadPublicMarket, TIMEFRAMES } from './market-data.mjs';
 
 const PORT = Number(process.env.PORT || 4173);
 const HOST = process.env.RAILWAY_ENVIRONMENT ? '0.0.0.0' : '127.0.0.1';
 const here = new URL('./', import.meta.url);
 const respond = (res, status, data, type = 'application/json; charset=utf-8') => {
-  res.writeHead(status, { 'content-type': type, 'cache-control': 'no-store', 'x-content-type-options': 'nosniff', 'content-security-policy': "default-src 'self'; style-src 'self'; script-src 'self'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; object-src 'none'" });
+  res.writeHead(status, { 'content-type': type, 'cache-control': 'no-store', 'x-content-type-options': 'nosniff', 'content-security-policy': "default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'; connect-src 'self' https://api.binance.com https://api1.binance.com https://data-api.binance.vision https://api.gateio.ws; img-src 'self' data:; base-uri 'none'; object-src 'none'" });
   res.end(typeof data === 'string' ? data : JSON.stringify(data));
 };
 
@@ -23,13 +24,14 @@ export async function publicCandles(fetcher = fetch, now = Date.now()) {
 
 async function route(req, res) {
   if (req.method !== 'GET') return respond(res, 405, { error: 'Read-only server: GET requests only' });
-  const path = new URL(req.url || '/', 'http://localhost').pathname;
+  const url = new URL(req.url || '/', 'http://localhost');
+  const path = url.pathname;
   if (path === '/api/evidence') {
     try { return respond(res, 200, await historicalEvidence()); }
     catch { return respond(res, 503, { error: 'Evidence is unavailable', status: 'UNKNOWN' }); }
   }
   if (path === '/api/market') {
-    try { return respond(res, 200, await publicCandles()); }
+    try { const tf=url.searchParams.get('tf')||'15m'; if(!Object.hasOwn(TIMEFRAMES,tf))return respond(res,400,{error:'Unsupported timeframe'}); return respond(res, 200, await loadPublicMarket(tf)); }
     catch { return respond(res, 503, { status: 'UNAVAILABLE', error: 'Public market source unavailable; do not substitute mock candles' }); }
   }
   if (path === '/api/tatum-live') {
@@ -41,11 +43,11 @@ async function route(req, res) {
       return respond(res, 200, { status: 'PASS', execution: 'LIVE', observedAt: observation.verifiedAt, provider: observation.provider, network: observation.network, checkpointHeight: observation.checkpointHeight, protocol: observation.protocol });
     } catch { return respond(res, 503, { status: 'UNKNOWN', reason: 'Tatum check failed (upstream diagnostics withheld to protect credentials)' }); }
   }
-  if (path === '/' || path === '/index.html' || path === '/app.js' || path === '/styles.css') {
+  if (path === '/' || path === '/index.html' || path === '/app.js' || path === '/market-data.mjs' || path === '/styles.css') {
     const name = path === '/' ? 'index.html' : path.slice(1);
     try {
       const body = await readFile(new URL(name, here), 'utf8');
-      const type = name.endsWith('.js') ? 'text/javascript; charset=utf-8' : name.endsWith('.css') ? 'text/css; charset=utf-8' : 'text/html; charset=utf-8';
+      const type = (name.endsWith('.js') || name.endsWith('.mjs')) ? 'text/javascript; charset=utf-8' : name.endsWith('.css') ? 'text/css; charset=utf-8' : 'text/html; charset=utf-8';
       return respond(res, 200, body, type);
     } catch { return respond(res, 404, { error: 'Not found' }); }
   }
