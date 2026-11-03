@@ -67,16 +67,21 @@ async function evidence(){
   }catch{set('checkpoint','—');set('memory-state','UNKNOWN');set('tatum-sub','Evidence unavailable');set('walrus-sub','Evidence unavailable')}
 }
 async function fetchMarket(interval,{force=false}={}){
-  if(!force&&marketCache.has(interval)&&Date.now()-(marketCache.get(interval).loadedAt)<30000)return marketCache.get(interval).result;
-  try{
-    const r=await loadPublicMarket(interval);
-    marketCache.set(interval,{loadedAt:Date.now(),result:r});return r;
-  }catch{
-    const r=await fetch('/api/market?tf='+encodeURIComponent(interval),{cache:'no-store'});
-    if(!r.ok)throw Error('Public market unavailable');
-    const result=await r.json();if(!Array.isArray(result.candles)||result.candles.length<2)throw Error('No completed candles');
-    marketCache.set(interval,{loadedAt:Date.now(),result});return result;
-  }
+  if(!force&&marketCache.has(interval)&&Date.now()-marketCache.get(interval).loadedAt<30000)return marketCache.get(interval).result;
+  // Prefer same-origin API: avoids browser CORS restrictions and keeps the chart responsive.
+  // Fall back to public spot endpoints when running as a purely static local build.
+  try {
+    const response=await fetch('/api/market?tf='+encodeURIComponent(interval),{cache:'no-store',signal:AbortSignal.timeout(9000)});
+    if(response.ok) {
+      const result=await response.json();
+      if(Array.isArray(result.candles)&&result.candles.length>=2&&result.timeframe===interval){
+        marketCache.set(interval,{loadedAt:Date.now(),result});return result;
+      }
+    }
+  }catch{}
+  const fallback=await loadPublicMarket(interval);
+  marketCache.set(interval,{loadedAt:Date.now(),result:fallback});
+  return fallback;
 }
 function renderJournal(){const body=$('journal-rows');body.replaceChildren();const source=marketCache.get('15m')?.result?.candles||[];const byTime=new Map(source.map(c=>[c.closeTime,c.close]));let complete=0,correct=0;
   for(const p of [...journal].reverse()){const target=Number(p.targetCloseTime),actual=byTime.get(target);let outcome='PENDING';if(Number.isFinite(actual)){outcome=p.direction==='UP'?(actual>p.entryPrice?'CORRECT':'INCORRECT'):(actual<p.entryPrice?'CORRECT':'INCORRECT');complete++;if(outcome==='CORRECT')correct++}
