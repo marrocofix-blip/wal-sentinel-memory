@@ -4,6 +4,8 @@ on:
     paths:
       - 'dashboard/**'
       - 'package.json'
+      - 'scripts/build-static.mjs'
+      - 'api/market.js'
       - '.github/workflows/stage3-dashboard.yml'
   pull_request:
     paths:
@@ -22,6 +24,16 @@ jobs:
           node-version: '22'
       - run: npm install --ignore-scripts
       - run: npm test
+      - name: Check source syntax and build public demo
+        run: |
+          node --check dashboard/app.js
+          node --check dashboard/market-data.mjs
+          node --check api/market.js
+          npm run build:public
+          test -s _site/index.html
+          test -s _site/market-data.mjs
+          test -s _site/app.js
+          test -s _site/evidence.json
       - name: Smoke-test read-only web server
         run: |
           node dashboard/server.mjs > /tmp/wal-dashboard.log 2>&1 &
@@ -30,5 +42,6 @@ jobs:
             sleep 1
           done
           grep -q 'WAL SENTINEL MEMORY' /tmp/wal-page.html
+          curl -fsS http://127.0.0.1:4173/market-data.mjs | grep -q 'normalizeBinance'
           curl -fsS http://127.0.0.1:4173/api/evidence > /tmp/wal-evidence.json
           node --input-type=module -e "import{readFileSync}from 'node:fs';const x=JSON.parse(readFileSync('/tmp/wal-evidence.json'));if(x.integration.status!=='NOT_VERIFIED_LIVE')process.exit(1)"
