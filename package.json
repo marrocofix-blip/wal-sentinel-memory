@@ -8,9 +8,13 @@
     "tatum:check": "node integrations/tatum.mjs",
     "memory:check": "node integrations/memory.mjs health",
     "memory:seed": "node integrations/memory.mjs seed",
-    "memory:recall": "node integrations/memory.mjs recall"
+    "memory:recall": "node integrations/memory.mjs recall",
+    "tatum:grpc": "node integrations/tatum-grpc.mjs"
   },
   "dependencies": {
-    "@mysten-incubation/memwal": "latest"
+    "@mysten-incubation/memwal": "latest",
+    "@mysten/sui": "^2.0.0",
+    "@protobuf-ts/grpc-transport": "^2.11.0",
+    "@grpc/grpc-js": "^1.14.0"
   }
 }
