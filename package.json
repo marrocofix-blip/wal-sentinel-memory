@@ -9,7 +9,9 @@
     "memory:check": "node integrations/memory.mjs health",
     "memory:seed": "node integrations/memory.mjs seed",
     "memory:recall": "node integrations/memory.mjs recall",
-    "tatum:grpc": "node integrations/tatum-grpc.mjs"
+    "tatum:grpc": "node integrations/tatum-grpc.mjs",
+    "dashboard": "node dashboard/server.mjs",
+    "dashboard:test": "node --test dashboard/*.test.mjs"
   },
   "dependencies": {
     "@mysten-incubation/memwal": "latest",
