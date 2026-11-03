@@ -26,16 +26,17 @@ test('market request failures do not invent candles', async()=>{
   await assert.rejects(publicCandles(async()=>({ok:false}),Date.now()));
 });
 test('prediction accuracy uses exact future candle timestamp',()=>{
+  const target = Date.parse('2026-11-03T00:14:59.999Z');
   const rows = evaluatePredictions([
-    {id:'a',predictedAt:'2026-11-03T00:00:00.000Z',direction:'UP',entryPrice:0.04,targetCloseTime:1799999},
-    {id:'b',predictedAt:'2026-11-03T00:00:00.000Z',direction:'DOWN',entryPrice:0.04,targetCloseTime:1799999},
+    {id:'a',predictedAt:'2026-11-03T00:00:00.000Z',direction:'UP',entryPrice:0.04,targetCloseTime:target},
+    {id:'b',predictedAt:'2026-11-03T00:00:00.000Z',direction:'DOWN',entryPrice:0.04,targetCloseTime:target},
     {id:'c',predictedAt:'2026-11-03T00:00:00.000Z',direction:'UP',entryPrice:0.04,targetCloseTime:9999999}
-  ],[{closeTime:1799999,close:0.041}]);
+  ],[{closeTime:target,close:0.041}]);
   assert.deepEqual(rows.map(x=>x.result),['CORRECT','INCORRECT','PENDING']);
   assert.deepEqual(accuracy(rows),{evaluated:2,correct:1,percentage:50});
 });
 test('no market observation means no accuracy score',()=>{
-  const rows=evaluatePredictions([{id:'a',predictedAt:'2026-11-03T00:00:00Z',direction:'UP',entryPrice:.04,targetCloseTime:1799999999999}],[]);
+  const rows=evaluatePredictions([{id:'a',predictedAt:'2026-11-03T00:00:00Z',direction:'UP',entryPrice:.04,targetCloseTime:target999999}],[]);
   assert.equal(rows[0].result,'PENDING');
   assert.equal(accuracy(rows).percentage,null);
 });
